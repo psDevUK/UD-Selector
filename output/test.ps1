@@ -1,5 +1,5 @@
 Import-Module UniversalDashboard.Community -RequiredVersion 2.8.1
-Import-Module "C:\ud\PowerSelect\selector\src\output\UniversalDashboard.UDSelector\UniversalDashboard.UDSelector.psd1"
+Import-Module UniversalDashboard.UDSelector
 function New-UDSelectorItem {
     [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
@@ -90,11 +90,10 @@ $dashboard = New-UDDashboard -Title "New Component" -Theme $theme -Content {
             }
             New-UDCard -BackgroundColor "#8789c0" -Content {
                 New-UDSelector -id  "stuff" -Options {
-                    New-UDSelectorItem -value (Get-Process).Id -label (Get-Process).Name
-                    # New-UDSelectorItem -value "SomeStuff1" -label "FancyLabel1"
-                    # New-UDSelectorItem -value "SomeStuff2" -label "FancyLabel2"
-                    # New-UDSelectorItem -value "SomeStuff3" -label "FancyLabel3"
-                    # New-UDSelectorItem -value "SomeStuff4" -label "FancyLabel4" -isDisabled
+                    New-UDSelectorItem -value "SomeStuff1" -label "FancyLabel1"
+                    New-UDSelectorItem -value "SomeStuff2" -label "FancyLabel2"
+                     New-UDSelectorItem -value "SomeStuff3" -label "FancyLabel3"
+                    New-UDSelectorItem -value "SomeStuff4" -label "FancyLabel4" -isDisabled
                 } -PlaceHolder "New Fancy Component..."
             }
             New-UDButton -Text "Toast" -OnClick {
