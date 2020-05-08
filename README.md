@@ -96,3 +96,6 @@ start-sleep -Seconds 5
 }
 ```
 This then syncs the grid and pivot table to display the information that was selected with the selected items.
+
+# Update New-UDSingleSelctor
+I have also added another component based on New-UDSelector, it works in exactly the same way but only allows a single selection. Requested and provided for UD members. So decided to call this one **New-UDSingleSelector** 
