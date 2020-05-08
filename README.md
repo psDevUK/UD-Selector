@@ -1,4 +1,4 @@
-# UD-Selector
+# New-UDSelector
 
 >Bringing react-select to universaldashboard
 
