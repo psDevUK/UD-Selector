@@ -99,3 +99,99 @@ This then syncs the grid and pivot table to display the information that was sel
 
 # Update New-UDSingleSelector
 I have also added another component based on New-UDSelector, it works in exactly the same way but only allows a single selection. Requested and provided for UD members. So decided to call this one **New-UDSingleSelector** 
+
+## Version 2.0 Released
+
+I now updated this component so it can handle pre-selected items in the list, and the ability to either close or leave open the menu selection after selection.
+here is a demo with two pre-selected items.  This could of been one pre-selected item, but I decided to have two for the demo. As well as showing you all the required CSS to style this component to your colour needs.
+
+## Demo with new preselection
+```
+Import-Module UniversalDashboard.Community
+Import-Module UniversalDashboard.UDSelector
+Get-UDDashboard | Stop-UDDashboard
+$theme = New-UDTheme -Name "Basic" -Definition @{
+    '.css-1wa3eu0-placeholder'        = @{
+        'color' = "rgb(164, 174, 193) !important"
+    }
+    '.css-1okebmr-indicatorSeparator' = @{
+        'background-color' = "rgb(164, 174, 193) !important"
+    }
+    '.css-1hwfws3'                    = @{
+        'height'      = "30px"
+        'align-items' = "flex-start"
+        'box-sizing'  = "initial !important"
+        'flex-wrap'   = "initial !important"
+    }
+    '.css-1rhbuit-multiValue'         = @{
+        'background-color' = "rgb(183, 195, 219) !important"
+
+    }
+    '.css-xb97g8'                     = @{
+        'background-color' = "rgb(164, 174, 193)"
+        'color'            = "#fffaf4"
+    }
+    '.css-12jo7m5'                    = @{
+        'color' = "rgb(255, 255, 255) !important"
+    }
+    '.css-tlfecz-indicatorContainer'  = @{
+        'color' = "rgb(164, 174, 193) !important"
+    }
+    '.css-yk16xz-control'             = @{
+        'border-color' = "rgb(164, 174, 193) !important"
+    }
+    '.css-1g6gooi'                    = @{
+        'padding-top' = "9px !important"
+        'color'       = "rgb(164, 174, 193) !important"
+    }
+} -Parent "Default"
+$dashboard = New-UDDashboard -Title "New Component" -Theme $theme -Content {
+    New-UDRow -Columns {
+        New-UDColumn -size 5 -Content {
+            New-UDCard -BackgroundColor "#8789c0" -Content {
+                New-UDSelector -Id "stuff" -Selected {
+                    @{ value = "push"; label = "Push" },
+                    @{ value = "pull"; label = "Pull" }
+                } -options {
+                    @{ value = "push"; label = "Push" },
+                    @{ value = "pull"; label = "Pull" },
+                    @{ value = "jump"; label = "Jump" },
+                    @{ value = "throw"; label = "Throw" }
+                    @{ value = "kick"; label = "Kick" }
+                    @{ value = "punch"; label = "Punch" }
+                }
+
+            }
+
+            New-UDButton -Text "Toast" -OnClick {
+                $val2 = (Get-UDElement -id "stuff").Attributes.selectedOption.Count | ConvertTo-Json | ConvertFrom-Json
+                if ([int]$val2 -gt 1) {
+                    $val = (Get-UDElement -id "stuff").Attributes.selectedOption | ConvertTo-Json -Depth 1 | ConvertFrom-Json | Select-Object -ExpandProperty SyncRoot
+                    [array]$source = $val | Select-Object -ExpandProperty SyncRoot
+                    $c = 0
+                    $values = $source | ? { $c % 2 -eq 0; $c++ }
+                    $length = $values.length
+                    $i = 0
+                    Do {
+                        $value += "'$($values[$i])'" + ","
+                        $i++
+                    }
+                    While ($i -le $length)
+                    $Session:value2 = $value.Substring(0, $value.Length - 4)
+                    Show-UDToast -Message "Selected Values:- $Session:value2" -Position topLeft -Duration 4000
+                    @("GridData", "InsideGrid") | Sync-UDElement
+                }
+                elseif ([int]$val2 -eq 1) {
+                    $single = (Get-UDElement -id "stuff").Attributes.selectedOption
+                    $selection = $single | Select-Object Root | ConvertTo-Json -Depth 2 | ConvertFrom-Json
+                    $finalvalue = $selection | Select-Object -ExpandProperty Root
+                    $Session:value2 = $finalvalue | Select-Object -First 1
+                    Show-UDToast -Message "You Selected $Session:value2"
+                }
+            }
+
+        }
+    }
+}
+Start-UDDashboard -Dashboard $dashboard -Port 10005
+```
